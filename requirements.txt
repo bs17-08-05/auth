@@ -1,0 +1,4 @@
+PyJwt
+aiohttp
+aioredis
+hiredis
