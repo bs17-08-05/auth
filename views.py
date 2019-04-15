@@ -60,17 +60,17 @@ async def signup(request):
     conn = await request.app['db_pool'].acquire()
     cur = await conn.cursor()
     await cur.execute(f'''SELECT id, phone_number, password, salt FROM core_user WHERE
-            phone_number='{request_data['phone_number']}';''')
+                          phone_number='{request_data['phone_number']}';''')
 
     async for result in cur:
         return json_response({'error': 'User with this phone exists'}, status=401)
 
     # create user in database
     hash_password, salt = hash_pass(password)
-    await cur.execute(f'''INSERT INTO core_user(phone_number, password, salt, user_name,
-            address, type) VALUES('{phone_number}', '{hash_password}', '{salt}',
-            '{user_name}', '{address}', '{user_type}') RETURNING id;''')
+    await cur.execute(f'''INSERT INTO core_user(phone_number, password, salt, user_name, type) VALUES('{phone_number}', 
+                        '{hash_password}', '{salt}', '{user_name}', '{user_type}') RETURNING id;''')
 
+    await cur.execute(f'''INSERT INTO core_customer(address, user_id) VALUES('{request_data['address']}', '')''')
     user_id = list(await cur.fetchone())[0]
 
     token, refresh_token = create_tokens(user_id, expiration_time=25)

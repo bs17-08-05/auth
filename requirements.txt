@@ -3,3 +3,4 @@ aiohttp
 aioredis
 hiredis
 aiohttp_cors
+aiopg
