@@ -26,11 +26,9 @@ def check_passwords(income_password, salt, db_password):
 
 
 def create_tokens(user_id, expiration_time=25):
-    payload = {'user_id': user_id, 'salt': generate_salt(), 'exp': datetime.now() +
-        timedelta(minutes=expiration_time)}
+    payload = {'user_id': user_id, 'salt': generate_salt()}
     token = jwt.encode(payload, SECRET).decode()
-    refresh_payload = {'token': token, 'exp': datetime.now() +
-            timedelta(hours=expiration_time)}
+    refresh_payload = {'token': token}
     refresh_token = jwt.encode(refresh_payload, SECRET).decode()
     return token, refresh_token
 

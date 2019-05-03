@@ -70,8 +70,11 @@ async def signup(request):
     await cur.execute(f'''INSERT INTO core_user(phone_number, password, salt, user_name, type) VALUES('{phone_number}', 
                         '{hash_password}', '{salt}', '{user_name}', '{user_type}') RETURNING id;''')
 
-    await cur.execute(f'''INSERT INTO core_customer(address, user_id) VALUES('{request_data['address']}', '')''')
     user_id = list(await cur.fetchone())[0]
+    if user_type == 'CU':
+        await cur.execute(f'''INSERT INTO core_customer(address, user_id) VALUES('{address}', '{user_id}')''')
+    else:
+        await cur.execute(f'''INSERT INTO core_courier(user_id) VALUES('{user_id}')''')
 
     token, refresh_token = create_tokens(user_id, expiration_time=25)
 
